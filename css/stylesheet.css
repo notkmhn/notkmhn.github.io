@@ -16,6 +16,19 @@ h2 {
 	font-family: Azonix;
 }
 
+p {
+	color: #72b57b;
+	font-family: Arial;
+}
+
+a:link {
+	color: pink;
+}
+
+a:visited {
+	color: yellow;
+}
+
 div#main {
 	position: absolute;
 	text-align: center;
