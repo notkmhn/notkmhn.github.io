@@ -1,1 +1,28 @@
-theme: jekyll-theme-minimal
+# Dependencies
+markdown:         kramdown
+highlighter:      rouge
+
+# Setup
+title:            RB9
+tagline:          'Arr bee nine? Arr-benign?'
+description:      'Nothing to see here yet.'
+url:              https://rb9.nl
+
+author:
+  name:           'Khaled Nassars'
+  url:            https://twitter.com/kmhnassar
+
+paginate:         5
+paginate_path:    '/blog/page:num'
+
+plugins:
+  - jekyll-feed
+  - jekyll-gist
+  - jekyll-paginate
+
+# Sidebar link settings
+sidebar_home_link:  true
+sidebar_blog_link:  '/blog'
+
+# GH Pages settings
+remote_theme: khalednassar/hydeout
