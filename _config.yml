@@ -8,6 +8,7 @@ author:
   url: https://twitter.com/khalednassar
 paginate: 5
 paginate_path: /blog/page:num/
+blog_home_path: '/blog/'
 exclude:
 - README.md
 - vendor/bundle
@@ -21,7 +22,6 @@ theme_colors:
   link-color: "#000000"
 sidebar-sticky: true
 sidebar_home_link: false
-sidebar_home_link_path: '/blog'
 sidebar_main_link: '/'
 layout-reverse: false
 remote_theme: khalednassar/hydeout
