@@ -1,1 +1,34 @@
-theme: jekyll-theme-minimal
+---
+title: RB9 blog
+tagline: Arr bee nine? Arr-benign?
+description: Nothing to see here yet.
+url: https://rb9.nl
+author:
+  name: Khaled Nassar
+  url: https://twitter.com/khalednassar
+paginate: 5
+paginate_path: /blog/page:num/
+exclude:
+- README.md
+- vendor/bundle
+plugins:
+- jekyll-feed
+- jekyll-gist
+- jekyll-paginate
+theme_colors:
+  sidebar-bg-color: "#000000"
+  sidebar-fg-color: "#FFFFFF"
+  link-color: "#000000"
+sidebar-sticky: true
+sidebar_home_link: false
+sidebar_home_link_path: '/blog'
+sidebar_main_link: '/'
+layout-reverse: false
+remote_theme: khalednassar/hydeout
+theme: jekyll-theme-hydeout
+collections:
+  posts:
+    output: true
+    permalink: /blog/:categories/:year/:month/:day/:title/
+feed:
+  path: /blog/feed.xml
