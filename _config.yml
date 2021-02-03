@@ -32,3 +32,4 @@ collections:
     permalink: /blog/:categories/:year/:month/:day/:title/
 feed:
   path: /blog/feed.xml
+site_repo_url: 'https://github.com/khalednassar/khalednassar.github.io/'
