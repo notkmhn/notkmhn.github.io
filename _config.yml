@@ -25,7 +25,6 @@ sidebar_home_link: false
 sidebar_main_link: '/'
 layout-reverse: false
 remote_theme: khalednassar/hydeout
-theme: jekyll-theme-hydeout
 collections:
   posts:
     output: true
