@@ -23,6 +23,7 @@ theme_colors:
 sidebar-sticky: true
 sidebar_home_link: false
 sidebar_main_link: '/'
+blog_assets_location: '/blog/assets'
 layout-reverse: false
 remote_theme: khalednassar/hydeout
 collections:
