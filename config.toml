@@ -25,7 +25,7 @@ paginate = 5
 [params]
   
   # Site description
-  description = "Arr-bee-nine? Arr-benign? ¯\_(ツ)_/¯"
+  description = "Arr-bee-nine? Arr-benign? ¯\\_(ツ)_/¯"
   # Author
   author      = "kmhn"
   authorDesc  = "Enjoys computer science, mathematics and information security."
