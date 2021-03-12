@@ -14,7 +14,6 @@ You can check out some of my posts about these topics [here](/posts) or on [root
 [Samsung TV bug bounty - Hall of fame](https://samsungtvbounty.com/HallOfFame.aspx#:~:text=Khaled%20Nassar)
 
 # Contact
-<script src="/js/jquery-3.5.2.min.js" integrity="sha384-1bBkQsBsW57bhUxHyzsKVpryuEaU5QMhTAMnrtXtwU0bfGso+sR3Us0iRBVE+BVo"></script>
 {{< social >}}
 <!-- Or you can also check out your console for a moment -->
 
