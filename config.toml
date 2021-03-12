@@ -34,7 +34,7 @@ paginate = 5
   # It will be used if the current page doesn't have a image cover
   # File will be picked from the "assets" directory
   # Comment the lines if you don't want to use it
-  #cover     = "img/cover.jpg"
+  cover     = "img/cover.png"
   #coverAlt  = "A placeholder that doesn't deserve to be described."
   
   # Shows a message in the footer about JavaScript being disabled
