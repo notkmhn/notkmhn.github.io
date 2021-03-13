@@ -1,5 +1,6 @@
 ---
 date: 2021-03-12
+lastmod: 2021-03-13
 layout: post
 title: Running your own services on your SOHO router for the greater good
 description: Recently, I've been wanting to run a PiHole server for ad-blocking in my home network, but I didn't want to set up a machine exclusively for it....
