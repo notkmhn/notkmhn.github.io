@@ -134,7 +134,7 @@ It's not that the systems are similar enough for the [same persistence method](h
 I needed to take a look at the configuration files, and it makes perfect sense: they may contain a few configuration options that are used within shell command invocations without sanitization on startup. After all, it should be already sanitized by whatever system was used to change them, right?
 
 ![assets/Pasted image 20210312063835.png](/assets/blog/img/1c9dc4de9a9a523491790bef07773c1ac6ad9b911e19d6f762bff2eacfc2a8e5.png)
-_Turns out that threat models matter a bit more in this context_
+_Turns out that threat models matter a bit more in this context. Source: [xkcd](https://xkcd.com/327/)._
 
 Anyway,  while the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300) has some tools for converting the backup .bin files to XML and back, they do not work with the Archer C3200. *Surprise!*
 I've also tried the other decryption/decoding tools I've found to no avail, so it was time to start doing some reverse engineering.
@@ -150,7 +150,7 @@ I initially went about going through the webserver binaries in [Ghidra](https://
 4. Compute the MD5 hash of the encrypted file
 5. Output the bin file as the MD5 hash of the encrypted file, followed by the encrypted file itself
 
-Looking at the suboperations, it kindof doesn't make sense that the tools identified so far don't work after changing the hardcoded DES key to match that of the C3200. In fact, out of the main significant suboperations, only the compression algorithm seems to be the likely candidate for change since everything else is supposedly standard. It's implemented in `libcutil.so` as `cen_compressBuff` and `cen_uncompressBuff`, so we'll go ahead and reverse engineer them.
+Looking at the suboperations, it kind of doesn't make sense that the tools identified so far don't work after changing the hardcoded DES key to match that of the C3200. In fact, out of the main significant suboperations, only the compression algorithm seems to be the likely candidate for change since everything else is supposedly standard. It's implemented in `libcutil.so` as `cen_compressBuff` and `cen_uncompressBuff`, so we'll go ahead and reverse engineer them.
 
 Or.. maybe not. I don't know about you, but I don't like doing more work than necessary when it isn't inherently interesting, so I took a break from trying to reverse engineer them and looked up the function names in hopes of finding some more information.
 
