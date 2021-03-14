@@ -226,3 +226,8 @@ paginate = 5
         name = "Posts"
         weight = 1
         url = "posts/"
+
+      [[languages.en.menu.main]]
+        name = "RSS"
+        weight = 1
+        url = "posts/index.xml"
