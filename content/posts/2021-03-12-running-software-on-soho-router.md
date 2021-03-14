@@ -1,6 +1,6 @@
 ---
 date: 2021-03-12
-lastmod: 2021-03-13
+lastmod: 2021-03-14
 layout: post
 title: Running your own services on your SOHO router for the greater good
 description: Recently, I've been wanting to run a PiHole server for ad-blocking in my home network, but I didn't want to set up a machine exclusively for it....
@@ -17,7 +17,7 @@ I could live with the above, but can't one do better? Just run it on the one dev
 In this post, I'll go over how I would generally go about mucking around with SOHO routers and exactly what I did to achieve my goal in this particular instance with the TP-Link Archer C3200.
 
 ## TL;DR
-If you have a TP-Link Archer C3200 or a "similar enough model" and you'd like to run your own tools/services on it, [follow the instructions in this GitHub repository](https://github.com/khalednassar/archerc3200-tools).
+If you have a TP-Link Archer C3200 or a "similar enough model" and you'd like to run your own tools/services on it, [follow the instructions in this GitHub repository](https://github.com/khalednassar/archer-c3200-tools).
 
 ## Setup
 The WiFi router we have is a [TP-Link Archer C3200](https://www.tp-link.com/us/home-networking/wifi-router/archer-c3200/) which we got on sale a couple of years ago. It is not exactly a great starting point if you'd like to run any other piece of software the vendor didn't want you to. The vendor simply does not allow you to execute your own code. There is _some_ access to the device over Telnet but that is highly limited and presents configuration options that are available in the web UI anyway. SSH is listening and accepts connections, and you can login, but you cannot actually get a shell session or execute any commands..
@@ -159,7 +159,7 @@ And for `cen_uncompressBuff`, I hit a couple of jackpots:
 1. [Tools and information for mucking about with the TP-Link TD-W9970 and TD-W9980 routers, including a method for command execution on startup through configuration files!](https://github.com/sta-c0000/tpconf_bin_xml)
 2. [A rather concerning but fantastic write up about a full-blown unauthenticated root shell vulnerability chain on the TP-Link TL-WR902AC](https://pwn2learn.dusuel.fr/blog/unauthenticated-root-shell-on-tp-link-tl-wr902ac-router/)
 
-Aand we basically have everything we need! After comparing the `cen_uncompressBuff` function in Ghidra with the implementation in the [tpconf_bin_xml](https://github.com/sta-c0000/tpconf_bin_xml) repository, it was easy to identify the small change in the algorithm. For whatever reason, though, the corresponding `cen_compressBuff` changes did not work. Rather than spend some more time trying to hunt down exactly what's wrong, I modified the code for emulating `cen_uncompressBuff` provided in the [pwn2learn writeup](https://pwn2learn.dusuel.fr/blog/unauthenticated-root-shell-on-tp-link-tl-wr902ac-router/) and used [angr](https://angr.io/) with [unicorn](https://www.unicorn-engine.org/) to emulate `cen_compressBuff` instead. The resulting code, along with usage instructions, can be found [here](https://github.com/khalednassar/archerc3200-tools).
+Aand we basically have everything we need! After comparing the `cen_uncompressBuff` function in Ghidra with the implementation in the [tpconf_bin_xml](https://github.com/sta-c0000/tpconf_bin_xml) repository, it was easy to identify the small change in the algorithm. For whatever reason, though, the corresponding `cen_compressBuff` changes did not work. Rather than spend some more time trying to hunt down exactly what's wrong, I modified the code for emulating `cen_uncompressBuff` provided in the [pwn2learn writeup](https://pwn2learn.dusuel.fr/blog/unauthenticated-root-shell-on-tp-link-tl-wr902ac-router/) and used [angr](https://angr.io/) with [unicorn](https://www.unicorn-engine.org/) to emulate `cen_compressBuff` instead. The resulting code, along with usage instructions, can be found [here](https://github.com/khalednassar/archer-c3200-tools).
 
 ## Putting it all together
 Well well, we have a way to execute commands on startup and we can use a usb drive to store our binaries/services/scripts, which is also mounted automatically on startup.
