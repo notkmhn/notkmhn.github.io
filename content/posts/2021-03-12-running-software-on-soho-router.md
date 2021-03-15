@@ -163,7 +163,7 @@ Aand we basically have everything we need! After comparing the `cen_uncompressBu
 
 ### Emulating the compression algorithm with angr and unicorn
 Rather than spend some more time trying to hunt down exactly what's wrong, I modified the code for emulating `cen_uncompressBuff` provided in the [pwn2learn writeup](https://pwn2learn.dusuel.fr/blog/unauthenticated-root-shell-on-tp-link-tl-wr902ac-router/) and used [angr](https://angr.io/) with [unicorn](https://www.unicorn-engine.org/) to emulate `cen_compressBuff` instead.
-It took about 30 minutes from looking at the pwn2learn angr emulation code next to the decompiled `cen_compressBuff`, to having a working compression routine.
+It took about 30 minutes from looking at the pwn2learn angr code next to the decompiled `cen_compressBuff`, to having a working compression routine.
 
 Emulation is definitely a much faster approach than reverse engineering especially when testing things out, but it doesn't always work out. In this particular case, the function was a great candidate for emulation because it has to be generally independent of the device's state and it invoked a handful of functions, which in turn were also simple.
 
