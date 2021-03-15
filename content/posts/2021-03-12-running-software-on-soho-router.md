@@ -1,6 +1,6 @@
 ---
 date: 2021-03-12
-lastmod: 2021-03-14
+lastmod: 2021-03-15
 layout: post
 title: Running your own services on your SOHO router for the greater good
 description: Recently, I've been wanting to run a PiHole server for ad-blocking in my home network, but I didn't want to set up a machine exclusively for it....
@@ -114,7 +114,7 @@ Reviewing the above, it looks like a huge chunk of our work may already be cut o
 As a matter of fact, the same [command injection vulnerability in the Archer C2 "Diagnostic" page](https://pierrekim.github.io/blog/2017-02-09-tplink-c2-and-c20i-vulnerable.html) works on the Archer C3200 firmware version 0.9.1 0.1 v004b.0 Build 160712, which is the latest available version as of the time of writing of this post.
 
 ### Finding an entrypoint the ole' fashioned way
-It is really nice that an already published vulnerability is still exploitable in another model, but in my limited experience of the other few times I've looked at a router, there is quite often a straightforward command injection for some inexplicable reason. In one way or another, the web UI or some other subsystem would have some form of command injection vulnerability, and here are some of the places that I believe are worth taking a look at:
+It is really nice that an already published vulnerability is still exploitable in another model, but in my limited experience with router exploration, there is quite often a straightforward command injection for some inexplicable reason. In one way or another, the web UI or some other subsystem would have some form of command injection vulnerability, and here are some of the places that are worth taking a look at:
 - Like the above, some form of diagnostics page which runs a standard command line tool like `ping` or `traceroute`.
 - NTP client configuration: most firmware developers don't want to write their own NTP client for good reasons, but it's mind-boggling how often NTP clients get daemonized by some vendor-made orchestrator service on the device, and how often these clients are just started with `sprintf`'d together configuration and invoked within a shell with `system`.
 - Logging facilities: for whatever reason, some routers' firmware invoke [`logger`](https://man7.org/linux/man-pages/man1/logger.1.html) within a shell context, and sometimes this is done in an unsanitary way. What do you usually see being logged in the web UI? DHCP leases! What do these sometimes contain? [DHCP option 12 - hostname](https://www.iana.org/assignments/bootp-dhcp-parameters/bootp-dhcp-parameters.xhtml).
@@ -122,26 +122,26 @@ It is really nice that an already published vulnerability is still exploitable i
 And if all else fails, reverse engineering parts of the firmware and bug hunting in the binaries is always an option.
 
 ## Persistence
-We're quite far already without doing much work, we can already get a shell and run commands over telnet in a similar method to the one described [in this advisory](https://pierrekim.github.io/blog/2017-02-09-tplink-c2-and-c20i-vulnerable.html). We can even compile and drop other executables if we desire, but this only really just gives us code execution, not persistence.
+We're quite far already without doing much work, we can already get a shell and run commands over telnet in a similar method to the one described [in this advisory](https://pierrekim.github.io/blog/2017-02-09-tplink-c2-and-c20i-vulnerable.html). We can even compile and drop other executables if we desire, but this gives us code execution only, not persistence.
 
-"What about the filesystem?" you ask. Indeed, if it were something other than a read-only SquashFS filesystem that could have worked just fine, but there are no other filesystems. We could try to figure out how to change the firmware for one of our own choosing, perhaps by finding an issue in the firmware signature checking routine, but it seems a little too far given the current scope and if it were that straightforward I'd expect someone else to have figured it out by then.
+"What about the filesystem?" you ask. Indeed, if it were something other than a read-only SquashFS filesystem, that could have worked just fine. However, there are no other filesystems. We could try to figure out how to change the firmware for one of our own choosing, perhaps by finding an issue in the firmware signature checking routine, but it seems a little too far given the current scope and if it were that straightforward I'd expect someone else to have figured it out by then.
 
 Hmm.. this conundrum leads to an obvious question though: how does the device store configuration changes, and can we piggyback onto them?
 
-We don't really need to answer the question of "how does it do X", but the answer for this is: it does so by utilizing some flash block device, which I didn't want to muck around with so I didn't investigate much further. What we can do instead is use some hints from the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300).
+After a bit of reverse engineering, the answer to "how does the device store configuration changes" is: it does so by utilizing some flash block device, which I didn't want to muck around with, unless necessary, so I didn't investigate much further. What we can do instead is use some hints from the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300).
 
 It's not that the systems are similar enough for the [same persistence method](https://github.com/acc-/tplink-archer-c2300/wiki/Saving-files-permanently) to work; it's that the [provided scripts](https://github.com/acc-/tplink-archer-c2300/tree/master/scripts) are mainly aimed at modifying the configuration files, which is mentioned in [other advisories too](https://github.com/JackDoan/TP-Link-ArcherC5-RCE).
 
-I needed to take a look at the configuration files, and it makes perfect sense: they may contain a few configuration options that are used within shell command invocations without sanitization on startup. After all, it should be already sanitized by whatever system was used to change them, right?
+### Decoding and encoding backup files
+I needed to take a look at the configuration files, and it makes sense: they may contain a few configuration options that are used within shell command invocations without sanitization on startup. After all, it should be already sanitized by whatever system was used to change them, right?
 
 ![assets/Pasted image 20210312063835.png](/assets/blog/img/1c9dc4de9a9a523491790bef07773c1ac6ad9b911e19d6f762bff2eacfc2a8e5.png)
 _Turns out that threat models matter a bit more in this context. Source: [xkcd](https://xkcd.com/327/)._
 
-Anyway,  while the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300) has some tools for converting the backup .bin files to XML and back, they do not work with the Archer C3200. *Surprise!*
+Anyway, while the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300) has some tools for converting the backup .bin files to XML and back, they do not work with the Archer C3200. *Surprise!*
 I've also tried the other decryption/decoding tools I've found to no avail, so it was time to start doing some reverse engineering.
 
-
-### Decoding and encoding backup files
+### Partially reverse engineering the (de-)compression algorithm
 I initially went about going through the webserver binaries in [Ghidra](https://ghidra-sre.org/) until I hit `libcmm.so` and `libcutil.so`, which are a couple of shared libraries that implement a decent chunk of functionality used by a few subsystems.
 
 `libcmm.so` contains a couple of interesting functions: `rsl_sys_backupCfg` and `rsl_sys_restoreCfg` for dealing with backup and restore, respectively. After going through them briefly, it seems that the encoding process hasn't changed too much compared to a few other models. The hardcoded DES encryption key used is different, but shows up for other models as well, and the structure is more or less the same for the backup operation:
@@ -159,7 +159,15 @@ And for `cen_uncompressBuff`, I hit a couple of jackpots:
 1. [Tools and information for mucking about with the TP-Link TD-W9970 and TD-W9980 routers, including a method for command execution on startup through configuration files!](https://github.com/sta-c0000/tpconf_bin_xml)
 2. [A rather concerning but fantastic write up about a full-blown unauthenticated root shell vulnerability chain on the TP-Link TL-WR902AC](https://pwn2learn.dusuel.fr/blog/unauthenticated-root-shell-on-tp-link-tl-wr902ac-router/)
 
-Aand we basically have everything we need! After comparing the `cen_uncompressBuff` function in Ghidra with the implementation in the [tpconf_bin_xml](https://github.com/sta-c0000/tpconf_bin_xml) repository, it was easy to identify the small change in the algorithm. For whatever reason, though, the corresponding `cen_compressBuff` changes did not work. Rather than spend some more time trying to hunt down exactly what's wrong, I modified the code for emulating `cen_uncompressBuff` provided in the [pwn2learn writeup](https://pwn2learn.dusuel.fr/blog/unauthenticated-root-shell-on-tp-link-tl-wr902ac-router/) and used [angr](https://angr.io/) with [unicorn](https://www.unicorn-engine.org/) to emulate `cen_compressBuff` instead. The resulting code, along with usage instructions, can be found [here](https://github.com/khalednassar/archer-c3200-tools).
+Aand we basically have everything we need! After comparing the `cen_uncompressBuff` function in Ghidra with the implementation in the [tpconf_bin_xml](https://github.com/sta-c0000/tpconf_bin_xml) repository, it was easy to identify the small change in the algorithm. However, the corresponding `cen_compressBuff` changes did not work.
+
+### Emulating the compression algorithm with angr and unicorn
+Rather than spend some more time trying to hunt down exactly what's wrong, I modified the code for emulating `cen_uncompressBuff` provided in the [pwn2learn writeup](https://pwn2learn.dusuel.fr/blog/unauthenticated-root-shell-on-tp-link-tl-wr902ac-router/) and used [angr](https://angr.io/) with [unicorn](https://www.unicorn-engine.org/) to emulate `cen_compressBuff` instead.
+It took about 30 minutes from looking at the pwn2learn angr emulation code next to the decompiled `cen_compressBuff`, to having a working compression routine.
+
+Emulation is definitely a much faster approach than reverse engineering especially when testing things out, but it doesn't always work out. In this particular case, the function was a great candidate for emulation because it has to be generally independent of the device's state and it invoked a handful of functions, which in turn were also simple.
+
+The resulting code, along with usage instructions, can be found [here](https://github.com/khalednassar/archer-c3200-tools).
 
 ## Putting it all together
 Well well, we have a way to execute commands on startup and we can use a usb drive to store our binaries/services/scripts, which is also mounted automatically on startup.
@@ -190,4 +198,4 @@ RUSTFLAGS='-C link-arg=-s' cargo build --release --target=armv7-unknown-linux-mu
 
 And we end up with a statically compiled binary version of nukedns at `target/armv7-unknown-linux-musleabi/release/nukedns`
 
-I then prepared a startup script which would launch `nukedns`, put them along with the `deny-list.txt` on a USB drive and plugged it into the router. After a router reboot and some configuration changes for the DNS servers on the router web interface, I was in the business of `NXDOMAIN`ing known advertising domain names on my home network, all without having to run an extra device, and maybe you can too!
+I then prepared a startup script which would launch `nukedns`, put them along with the `denylist.txt` on a USB drive and plugged it into the router. After a router reboot and some configuration changes for the DNS servers on the router web interface, I was in the business of `NXDOMAIN`ing known advertising domain names on my home network, all without having to run an extra device, and maybe you can too!
