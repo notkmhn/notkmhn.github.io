@@ -1,6 +1,6 @@
 ---
 date: 2021-03-12
-lastmod: 2021-03-15
+lastmod: 2021-03-20
 layout: post
 title: Running your own services on your SOHO router for the greater good
 description: Recently, I've been wanting to run a PiHole server for ad-blocking in my home network, but I didn't want to set up a machine exclusively for it....
@@ -138,8 +138,11 @@ I needed to take a look at the configuration files, and it makes sense: they may
 ![assets/Pasted image 20210312063835.png](/assets/blog/img/1c9dc4de9a9a523491790bef07773c1ac6ad9b911e19d6f762bff2eacfc2a8e5.png)
 _Turns out that threat models matter a bit more in this context. Source: [xkcd](https://xkcd.com/327/)._
 
-Anyway, while the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300) has some tools for converting the backup .bin files to XML and back, they do not work with the Archer C3200. *Surprise!*
-I've also tried the other decryption/decoding tools I've found to no avail, so it was time to start doing some reverse engineering.
+So how do we do so? The files are in some binary format, but the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300) has some tools for converting the backup .bin files to XML and back, awesome!
+
+However, they do not work with the Archer C3200 because the format for these files has changed. *Surprise!*
+
+After spending some time looking around and having tried all the other decryption/decoding tools I could find to no avail, I decided that it was time to start doing some reverse engineering.
 
 ### Partially reverse engineering the (de-)compression algorithm
 I initially went about going through the webserver binaries in [Ghidra](https://ghidra-sre.org/) until I hit `libcmm.so` and `libcutil.so`, which are a couple of shared libraries that implement a decent chunk of functionality used by a few subsystems.
