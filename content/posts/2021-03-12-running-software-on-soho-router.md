@@ -138,7 +138,7 @@ I needed to take a look at the configuration files, and it makes sense: they may
 ![assets/Pasted image 20210312063835.png](/assets/blog/img/1c9dc4de9a9a523491790bef07773c1ac6ad9b911e19d6f762bff2eacfc2a8e5.png)
 _Turns out that threat models matter a bit more in this context. Source: [xkcd](https://xkcd.com/327/)._
 
-So how do we do so? The files are in some binary format, but the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300) has some tools for converting the backup .bin files to XML and back, awesome!
+So how do we do so? The files are in some binary format, but the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300) has some tools for converting the backup .bin files to XML and back. Awesome!
 
 However, they do not work with the Archer C3200 because the format for these files has changed. *Surprise!*
 
