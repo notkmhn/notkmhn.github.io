@@ -6,7 +6,7 @@ disableTitleSeparator = true
 # Hi, I'm Khaled
 Online, I go by some variation of my initials and/or name: [**kmhn**](https://keybase.io/kmhn) for the most part, but sometimes [**kmhnassar**](https://twitter.com/kmhnassar).
 
-I have a background in computer science and cybersecurity with a wide interest in a number of their subfields. Usually, I'm up to discuss programming, software architecture, embedded systems, cryptography and everything else in between!
+I have a background in computer science and cybersecurity with a wide interest in a number of their subfields. Usually, I'm up to discuss programming, software architecture, embedded systems, cryptography and everything else in between! In my free time, I take up random research and/or fun projects in these topics and participate in hacking Capture The Flag (CTF) tournaments with [Spotless](https://spotless.tech).
 
 You can check out some of my posts about these topics [here](/posts) or on [rootfs.eu](https://rootfs.eu).
 
