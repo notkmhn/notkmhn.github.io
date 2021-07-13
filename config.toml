@@ -231,3 +231,8 @@ paginate = 5
         name = "RSS"
         weight = 1
         url = "posts/index.xml"
+
+      [[languages.en.menu.main]]
+        name = "RFC Hummus"
+        weight = 1
+        url = "https://hummus.rb9.nl/"
