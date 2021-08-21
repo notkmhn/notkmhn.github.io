@@ -1,6 +1,6 @@
 ---
-date: 2021-08-20
-lastmod: 2021-08-20
+date: 2021-08-21
+lastmod: 2021-08-21
 layout: post
 title: Using a BigInteger for (limited) text to binary encoding
 description: While writing an exploit for a Java EL injection vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode...
@@ -11,7 +11,7 @@ tags:
 ---
 While writing an exploit for a [Java EL injection](https://owasp.org/www-community/vulnerabilities/Expression_Language_Injection) vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode as text and decode it on the vulnerable machine for an exploit chain. I couldn't find any of the usual suspect classes to do base64 encoding or other options available on the classpath of the target.
 
-Instead, I've found that in this particular scenario, it was much easier to use `java.math.BigInteger` for the decoding. Granted, while it doesn't work for encoding alogrithms where the data to be encoded is treated as an unsigned integer, it works quite well when you have control over both ends of the line. That being said, I would definitely use a more standard solution for general development. There are some limitations including the fact that it does not handle leading zero bytes.
+Instead, I've found that in this particular scenario, it was much easier to use `java.math.BigInteger`. Granted, while it doesn't work for the conventional text to binary decoding scenario, it works quite well when you have control over both ends of the line. That being said, I would definitely use a more standard solution for general development. There are some limitations including the lack of handling for leading zero bytes, which I didn't have to deal with since Java classes always start with the magic sequence `0xCAFEBABE`.
 
 Here's a Python implementation for the sending side. Note that it's necessary to make sure that the data is interpreted as a signed integer, because `java.math.BigInteger#toByteArray` will [return the sign-extended 2's complement representation](https://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html#toByteArray()).
 ```python
