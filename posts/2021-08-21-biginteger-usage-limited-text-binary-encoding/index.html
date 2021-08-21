@@ -4,7 +4,7 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=generator content="Hugo 0.87.0">
 <meta name=theme content="Color Your World -- gitlab.com/rmaguiar/hugo-theme-color-your-world">
-<title>Using a BigInteger for (limited) text to binary encoding | rb9</title>
+<title>Java 7+ - using a BigInteger for (limited) text to binary decoding | rb9</title>
 <meta name=author content="kmhn">
 <meta name=description content="While writing an exploit for a Java EL injection vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode...">
 <meta name=robots content="index follow">
@@ -13,7 +13,7 @@
 <link rel=icon type=image/png href=/favicon.png>
 <script src=/js/jquery-3.5.2.min.js integrity=sha384-1bBkQsBsW57bhUxHyzsKVpryuEaU5QMhTAMnrtXtwU0bfGso+sR3Us0iRBVE+BVo></script>
 <meta property="og:site_name" content="rb9">
-<meta property="og:title" content="Using a BigInteger for (limited) text to binary encoding">
+<meta property="og:title" content="Java 7+ - using a BigInteger for (limited) text to binary decoding">
 <meta property="og:description" content="While writing an exploit for a Java EL injection vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode...">
 <meta property="og:url" content="https://rb9.nl/posts/2021-08-21-biginteger-usage-limited-text-binary-encoding/">
 <meta property="og:image" content="https://rb9.nl/cover_hu34ef8a6c2ad2188b0efd6a4dc392a36b_24932_1200x630_fill_box_smart1_3.png">
@@ -32,7 +32,7 @@
 <meta name=theme-color content="#222">
 <meta name=apple-mobile-web-app-capable content="yes">
 <meta name=apple-mobile-web-app-status-bar-style content="default">
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebSite","@id":"https:\/\/rb9.nl\/"},"headline":"Using a BigInteger for (limited) text to binary encoding","description":"While writing an exploit for a Java EL injection vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode...","image":["https://rb9.nl/cover_hu34ef8a6c2ad2188b0efd6a4dc392a36b_24932_1280x640_fill_box_smart1_3.png","https://rb9.nl/cover_hu34ef8a6c2ad2188b0efd6a4dc392a36b_24932_1200x630_fill_box_smart1_3.png","https://rb9.nl/cover_hu34ef8a6c2ad2188b0efd6a4dc392a36b_24932_1280x0_resize_box_3.png"],"url":"https:\/\/rb9.nl\/posts\/2021-08-21-biginteger-usage-limited-text-binary-encoding\/","inLanguage":"en","datePublished":"2021-08-21","dateModified":"2021-08-21","wordCount":"323","publisher":{"@type":"Person","name":"kmhn"},"author":{"@type":"Person","name":"kmhn","description":"Enjoys computer science, mathematics and information security.","sameAs":["https://github.com/khalednassar","https://keybase.io/kmhn","https://twitter.com/kmhnassar"]}}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebSite","@id":"https:\/\/rb9.nl\/"},"headline":"Java 7+ - using a BigInteger for (limited) text to binary decoding","description":"While writing an exploit for a Java EL injection vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode...","image":["https://rb9.nl/cover_hu34ef8a6c2ad2188b0efd6a4dc392a36b_24932_1280x640_fill_box_smart1_3.png","https://rb9.nl/cover_hu34ef8a6c2ad2188b0efd6a4dc392a36b_24932_1200x630_fill_box_smart1_3.png","https://rb9.nl/cover_hu34ef8a6c2ad2188b0efd6a4dc392a36b_24932_1280x0_resize_box_3.png"],"url":"https:\/\/rb9.nl\/posts\/2021-08-21-biginteger-usage-limited-text-binary-encoding\/","inLanguage":"en","datePublished":"2021-08-21","dateModified":"2021-08-21","wordCount":"323","publisher":{"@type":"Person","name":"kmhn"},"author":{"@type":"Person","name":"kmhn","description":"Enjoys computer science, mathematics and information security.","sameAs":["https://github.com/khalednassar","https://keybase.io/kmhn","https://twitter.com/kmhnassar"]}}</script>
 <link rel=stylesheet href=/css/main.min.css>
 <noscript>
 <meta name=theme-color content="#f27466">
@@ -69,7 +69,7 @@
 <main>
 <article>
 <header>
-<h1>Using a BigInteger for (limited) text to binary encoding</h1>
+<h1>Java 7+ - using a BigInteger for (limited) text to binary decoding</h1>
 <section class=terms>
 <ul><li><a class=btn href=/tags/java/>java</a></li><li><a class=btn href=/tags/short/>short</a></li></ul>
 </section>
