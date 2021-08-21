@@ -2,7 +2,7 @@
 date: 2021-08-21
 lastmod: 2021-08-21
 layout: post
-title: Using a BigInteger for (limited) text to binary encoding
+title: Java 7+ - using a BigInteger for (limited) text to binary decoding
 description: While writing an exploit for a Java EL injection vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode...
 author: kmhn
 tags:
