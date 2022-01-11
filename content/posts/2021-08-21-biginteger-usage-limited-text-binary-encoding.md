@@ -1,14 +1,16 @@
 ---
+author: kmhn
 date: 2021-08-21
+description: While writing an exploit for a Java EL injection vulnerability on a particularly
+  weird setup using Java 7, I needed to find a way to encode Java class bytecode...
 lastmod: 2021-08-21
 layout: post
-title: Java 7+ - using a BigInteger for (limited) text to binary decoding
-description: While writing an exploit for a Java EL injection vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode...
-author: kmhn
 tags:
-  - java
-  - short
+- java
+- short
+title: Java 7+ - using a BigInteger for (limited) text to binary decoding
 ---
+
 While writing an exploit for a [Java EL injection](https://owasp.org/www-community/vulnerabilities/Expression_Language_Injection) vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode as text and decode it on the vulnerable machine for an exploit chain. I couldn't find any of the usual suspect classes to do base64 encoding or other options available on the classpath of the target.
 
 Instead, I've found that in this particular scenario, it was much easier to use `java.math.BigInteger`. Granted, while it doesn't work for the conventional text to binary decoding scenario, it works quite well when you have control over both ends of the line. That being said, I would definitely use a more standard solution for general development. There are some limitations including the lack of handling for leading zero bytes, which I didn't have to deal with since Java classes always start with the magic sequence `0xCAFEBABE`.

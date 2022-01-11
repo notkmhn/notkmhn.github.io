@@ -1,15 +1,17 @@
 ---
+author: kmhn
 date: 2021-03-12
+description: Recently, I've been wanting to run a PiHole server for ad-blocking in
+  my home network, but I didn't want to set up a machine exclusively for it...
 lastmod: 2021-03-20
 layout: post
-title: Running your own services on your SOHO router for the greater good
-description: Recently, I've been wanting to run a PiHole server for ad-blocking in my home network, but I didn't want to set up a machine exclusively for it...
-author: kmhn
-toc: true
 tags:
 - hardware
 - networking
+title: Running your own services on your SOHO router for the greater good
+toc: true
 ---
+
 Recently, I've been wanting to run a [PiHole](https://pi-hole.net) server for ad-blocking in my home network, but I didn't want to set up a machine exclusively for it.
 So, I thought I could reuse a Raspberry Pi 4 that is running [OctoPrint](https://octoprint.org) for a PiHole setup. This worked fine for the most part, but I wasn't fan of the setup for a couple of reasons:
 1. The RPi4 is hooked up to the network over WiFi. Ideally, the recursive DNS resolver that my entire home network will be using should not have a lot of latency, and I would rather not have it be on a WiFi connected node since most of our personal devices at home are also on WiFi.
