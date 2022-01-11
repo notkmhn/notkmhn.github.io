@@ -1,16 +1,20 @@
 ---
-layout: post
-title: CODE BLUE CTF 2017 - Common Modulus series
-date: 2017-11-15
-lastmod: 2021-04-04
 author: kmhn
-description: There are 3 challenges in this series, all of which are based on the same problem with varying conditions. Therefore, we’ll go through them in increasing order of difficulty and build solutions incrementally...
+date: 2017-11-15
+description: There are 3 challenges in this series, all of which are based on the
+  same problem with varying conditions. Therefore, we’ll go through them in increasing
+  order of difficulty and build solutions incrementally...
 katex: true
-katexExtensions: [ copy-tex ]
+katexExtensions:
+- copy-tex
+lastmod: 2021-04-04
+layout: post
 tags:
 - cryptography
 - ctf
+title: CODE BLUE CTF 2017 - Common Modulus series
 ---
+
 **NOTE:** _This post was initially [published on rootfs.eu](https://rootfs.eu/codeblue2017-common-modulus/)_
 
 There are 3 challenges in this series, all of which are based on the same problem with varying conditions. Therefore, we'll go through them in increasing order of difficulty and build solutions incrementally.
