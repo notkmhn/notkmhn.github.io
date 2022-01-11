@@ -2,7 +2,7 @@
 <head prefix="og: http://ogp.me/ns#">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=generator content="Hugo 0.87.0">
+<meta name=generator content="Hugo 0.91.2">
 <meta name=theme content="Color Your World -- gitlab.com/rmaguiar/hugo-theme-color-your-world">
 <title>CODE BLUE CTF 2017 - Common Modulus series | rb9</title>
 <meta name=author content="kmhn">
@@ -146,7 +146,7 @@ $$
 <p>So we&rsquo;ve successfully recovered the first message, and hence the the first flag: <code>CBCTF{6ac2afd2fc108894db8ab21d1e30d3f3}</code>.</p>
 <h3 id=common-modulus-2-1><a class=anchor href=#common-modulus-2-1 title='Anchor for "Common Modulus 2".'><svg aria-hidden="true"><use xlink:href="#hashtag"/></svg></a> Common Modulus 2</h3>
 <p>For this variation, we don&rsquo;t recover the message itself but instead we get \(m^3 \mod n\). However, we know that the flag is of the form</p>
-<pre aria-label="Box containing code sample." tabindex=0><code>CBCTF{ ... 32 characters representing a hex-encoded MD5 hash ... }
+<pre tabindex=0><code>CBCTF{ ... 32 characters representing a hex-encoded MD5 hash ... }
 </code></pre><p>Meaning that the bit length of the flag is</p>
 <ol>
 <li>32 characters of the hash, at 8-bits per character, 256 bits +</li>
