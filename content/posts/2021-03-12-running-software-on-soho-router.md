@@ -40,7 +40,7 @@ Now that we're determined to take this route, we have to specify what we're look
 - Finding a _persistable_ code/command execution "feature". It doesn't have to be _remote_, but it has to be automatically triggerable on device startup.
 - Identifying a suitable persistent storage option for binaries for the device. This could really be anything, and it would vary quite a lot from device to another, what we're looking for here is ideally simple and limited to the device itself without any external dependencies.
 
-Additionally, to make this project a bit more approachable for myself as I am an amateur hardware hacker at best, an additional goal is to keep it to software unless it is necessary to open up the device.
+Additionally, to make this project a bit more approachable and interesting, I decided to try to scope the project to software as much as possible; hence no mucking around with the hardware unless necessary.
 
 ## Information gathering
 First order of business is get a copy of the firmware, usually in some binary format, which we can dissect to try and do a plethora of things:
