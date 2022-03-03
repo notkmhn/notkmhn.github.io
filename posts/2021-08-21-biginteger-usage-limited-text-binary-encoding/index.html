@@ -2,10 +2,9 @@
 <head prefix="og: http://ogp.me/ns#">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=generator content="Hugo 0.91.2">
+<meta name=generator content="Hugo 0.93.1">
 <meta name=theme content="Color Your World -- gitlab.com/rmaguiar/hugo-theme-color-your-world">
-<title>Java 7+ - using a BigInteger for (limited) text to binary decoding | rb9</title>
-<meta name=author content="kmhn">
+<title>Java 7+ - using a BigInteger for (limited) text to binary decoding | rb9</title><meta name=author content="kmhn">
 <meta name=description content="While writing an exploit for a Java EL injection vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode...">
 <meta name=robots content="index follow">
 <meta name=referrer content="no-referrer-when-downgrade">
@@ -36,9 +35,7 @@
 <link rel=stylesheet href=/css/main.min.css>
 <noscript>
 <meta name=theme-color content="#f27466">
-<style>html{--accent:#f27466}.req-js{display:none}</style>
-</noscript>
-<link rel=preload href=/fonts/open-sans-v17-latin-700.woff as=font crossorigin=anonymous>
+<style>html{--accent:#f27466}.req-js{display:none}</style></noscript><link rel=preload href=/fonts/open-sans-v17-latin-700.woff as=font crossorigin=anonymous>
 <link rel=preload href=/fonts/open-sans-v17-latin-700.woff2 as=font crossorigin=anonymous>
 <link rel=preload href=/fonts/open-sans-v17-latin-italic.woff as=font crossorigin=anonymous>
 <link rel=preload href=/fonts/open-sans-v17-latin-italic.woff2 as=font crossorigin=anonymous>
@@ -49,84 +46,60 @@
 <link rel=me href=https://github.com/khalednassar>
 <link rel=me href=https://keybase.io/kmhn>
 <link rel=me href=https://twitter.com/kmhnassar>
-<script>'use strict';const ROOT=document.documentElement,SHEET=document.documentElement.style,META_THEME_COLOR=document.querySelector('meta[name=theme-color]');function setDark(){ROOT.dataset.mode='dark'}function setLight(){ROOT.dataset.mode='light'}localStorage.getItem('isDark')=='true'?setDark():localStorage.getItem('isDark')=='false'&&setLight();function getAccent(){var a;return ROOT.dataset.mode==='dark'?localStorage.getItem('darkAccent')===null?(a="#f27466"):(a=localStorage.getItem('darkAccent')):ROOT.dataset.mode==='light'&&(localStorage.getItem('lightAccent')===null?(a="#225670"):(a=localStorage.getItem('lightAccent'))),a}var activeAccent=getAccent();SHEET.setProperty('--accent',activeAccent),META_THEME_COLOR.setAttribute('content',activeAccent);function updateAccent(){var a=getAccent();SHEET.setProperty('--accent',a),PALETTE.value=a,META_THEME_COLOR.setAttribute('content',a)}document.addEventListener('DOMContentLoaded',function(){PALETTE.value=activeAccent;function a(){document.body.style.transition=document.querySelector('header').style.transition=document.querySelector('footer').style.transition='background-color .3s ease, color .3s ease'}function b(){a(),ROOT.dataset.mode=='light'?(setDark(),localStorage.setItem('isDark','true')):(setLight(),localStorage.setItem('isDark','false')),updateAccent()}document.querySelector('footer button').addEventListener('click',b)})</script>
-</head>
-<body>
+<script>'use strict';const ROOT=document.documentElement,SHEET=document.documentElement.style,META_THEME_COLOR=document.querySelector("meta[name=theme-color]");function setDark(){ROOT.dataset.mode="dark"}function setLight(){ROOT.dataset.mode="light"}localStorage.getItem("isDark")=="true"?setDark():localStorage.getItem("isDark")=="false"&&setLight();function getAccent(){if(ROOT.dataset.mode==="dark")if(localStorage.getItem("darkAccent")===null)var e="#f27466";else e=localStorage.getItem("darkAccent");else ROOT.dataset.mode==="light"&&(localStorage.getItem("lightAccent")===null?(e="#225670"):(e=localStorage.getItem("lightAccent")));return e}var activeAccent=getAccent();SHEET.setProperty("--accent",activeAccent),META_THEME_COLOR.setAttribute("content",activeAccent);function updateAccent(){var e=getAccent();SHEET.setProperty("--accent",e),PALETTE.value=e,META_THEME_COLOR.setAttribute("content",e)}document.addEventListener("DOMContentLoaded",function(){PALETTE.value=activeAccent;function e(){document.body.style.transition=document.querySelector("header").style.transition=document.querySelector("footer").style.transition="background-color .3s ease, color .3s ease"}function t(){e(),ROOT.dataset.mode=="light"?(setDark(),localStorage.setItem("isDark","true")):(setLight(),localStorage.setItem("isDark","false")),updateAccent()}document.querySelector("footer button").addEventListener("click",t)})</script>
+</head><body>
 <header>
 <a href=/>rb9</a>
 <nav aria-label="Main menu.">
 <ul>
 <li>
 <a class=btn href=/posts/>Posts</a>
-</li>
-<li>
+</li><li>
 <a class=btn href=/posts/index.xml>RSS</a>
-</li>
-</ul>
-</nav>
-</header>
-<div class=filler>
+</li></ul></nav></header><div class=filler>
 <main>
 <article>
 <header>
-<h1>Java 7+ - using a BigInteger for (limited) text to binary decoding</h1>
-<section class=terms>
-<ul><li><a class=btn href=/tags/java/>java</a></li><li><a class=btn href=/tags/short/>short</a></li></ul>
-</section>
-<p>
+<h1>Java 7+ - using a BigInteger for (limited) text to binary decoding</h1><section class=terms>
+<ul><li><a class=btn href=/tags/java/>java</a></li><li><a class=btn href=/tags/short/>short</a></li></ul></section><p>
 Published on <time datetime=2021-08-21>2021-08-21</time>
-</p>
-</header>
-<p>While writing an exploit for a <a href=https://owasp.org/www-community/vulnerabilities/Expression_Language_Injection>Java EL injection</a> vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode as text and decode it on the vulnerable machine for an exploit chain. I couldn&rsquo;t find any of the usual suspect classes to do base64 encoding or other options available on the classpath of the target.</p>
-<p>Instead, I&rsquo;ve found that in this particular scenario, it was much easier to use <code>java.math.BigInteger</code>. Granted, while it doesn&rsquo;t work for the conventional text to binary decoding scenario, it works quite well when you have control over both ends of the line. That being said, I would definitely use a more standard solution for general development. There are some limitations including the lack of handling for leading zero bytes, which I didn&rsquo;t have to deal with since Java classes always start with the magic sequence <code>0xCAFEBABE</code>.</p>
-<p>Here&rsquo;s a Python implementation for the sending side. Note that it&rsquo;s necessary to make sure that the data is interpreted as a signed integer, because <code>java.math.BigInteger#toByteArray</code> will <a href=https://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html#toByteArray()>return the sign-extended 2&rsquo;s complement representation</a>.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># From https://stackoverflow.com/a/1181922</span>
-<span class=k>def</span> <span class=nf>b36encode</span><span class=p>(</span><span class=n>number</span><span class=p>,</span> <span class=n>alphabet</span><span class=o>=</span><span class=s1>&#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span><span class=p>):</span>
-    <span class=s2>&#34;&#34;&#34;Converts an integer to a base36 string.&#34;&#34;&#34;</span>
-    <span class=k>if</span> <span class=ow>not</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>number</span><span class=p>,</span> <span class=nb>int</span><span class=p>):</span>
-        <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=s1>&#39;number must be an integer&#39;</span><span class=p>)</span>
-
-    <span class=n>base36</span> <span class=o>=</span> <span class=s1>&#39;&#39;</span>
-    <span class=n>sign</span> <span class=o>=</span> <span class=s1>&#39;&#39;</span>
-
-    <span class=k>if</span> <span class=n>number</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>:</span>
-        <span class=n>sign</span> <span class=o>=</span> <span class=s1>&#39;-&#39;</span>
-        <span class=n>number</span> <span class=o>=</span> <span class=o>-</span><span class=n>number</span>
-
-    <span class=k>if</span> <span class=mi>0</span> <span class=o>&lt;=</span> <span class=n>number</span> <span class=o>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=n>alphabet</span><span class=p>):</span>
-        <span class=k>return</span> <span class=n>sign</span> <span class=o>+</span> <span class=n>alphabet</span><span class=p>[</span><span class=n>number</span><span class=p>]</span>
-
-    <span class=k>while</span> <span class=n>number</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>:</span>
-        <span class=n>number</span><span class=p>,</span> <span class=n>i</span> <span class=o>=</span> <span class=nb>divmod</span><span class=p>(</span><span class=n>number</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=n>alphabet</span><span class=p>))</span>
-        <span class=n>base36</span> <span class=o>=</span> <span class=n>alphabet</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>+</span> <span class=n>base36</span>
-
-    <span class=k>return</span> <span class=n>sign</span> <span class=o>+</span> <span class=n>base36</span>
-
-<span class=k>def</span> <span class=nf>encode</span><span class=p>(</span><span class=n>data</span><span class=p>:</span> <span class=nb>bytes</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
-    <span class=n>datalong</span> <span class=o>=</span> <span class=nb>int</span><span class=o>.</span><span class=n>from_bytes</span><span class=p>(</span><span class=n>data</span><span class=p>,</span> <span class=n>byteorder</span><span class=o>=</span><span class=s1>&#39;big&#39;</span><span class=p>,</span> <span class=n>signed</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
-    <span class=k>return</span> <span class=n>b36encode</span><span class=p>(</span><span class=n>datalong</span><span class=p>)</span><span class=o>.</span><span class=n>lower</span><span class=p>()</span>
-</code></pre></div><p>Here are a couple of examples, first we encode some data:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>encode</span><span class=p>([</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span><span class=p>])</span>
-<span class=s1>&#39;a2f44&#39;</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>encode</span><span class=p>([</span><span class=mi>240</span><span class=p>,</span> <span class=mi>253</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>16</span><span class=p>])</span>
-<span class=s1>&#39;-45y3n4&#39;</span>
-</code></pre></div><p>And we decode them by using the appropriate constructor, then invoking <code>java.math.BigInteger#toByteArray</code>:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>IOException</span> <span class=o>{</span>
-  <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>((</span><span class=n>Arrays</span><span class=o>.</span><span class=na>toString</span><span class=o>(</span><span class=k>new</span> <span class=n>BigInteger</span><span class=o>(</span><span class=s>&#34;a2f44&#34;</span><span class=o>,</span> <span class=n>36</span><span class=o>).</span><span class=na>toByteArray</span><span class=o>())));</span>
-  <span class=c1>// [1, 2, 3, 4]
-</span><span class=c1></span>  <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>((</span><span class=n>Arrays</span><span class=o>.</span><span class=na>toString</span><span class=o>(</span><span class=k>new</span> <span class=n>BigInteger</span><span class=o>(</span><span class=s>&#34;-45y3n4&#34;</span><span class=o>,</span> <span class=n>36</span><span class=o>).</span><span class=na>toByteArray</span><span class=o>())));</span>
-  <span class=c1>// [-16, -3, 4, 16]
-</span><span class=c1></span><span class=o>}</span>
-</code></pre></div>
-</article>
-</main>
-</div>
-<footer>
+</p></header><p>While writing an exploit for a <a href=https://owasp.org/www-community/vulnerabilities/Expression_Language_Injection>Java EL injection</a> vulnerability on a particularly weird setup using Java 7, I needed to find a way to encode Java class bytecode as text and decode it on the vulnerable machine for an exploit chain. I couldn&rsquo;t find any of the usual suspect classes to do base64 encoding or other options available on the classpath of the target.</p><p>Instead, I&rsquo;ve found that in this particular scenario, it was much easier to use <code>java.math.BigInteger</code>. Granted, while it doesn&rsquo;t work for the conventional text to binary decoding scenario, it works quite well when you have control over both ends of the line. That being said, I would definitely use a more standard solution for general development. There are some limitations including the lack of handling for leading zero bytes, which I didn&rsquo;t have to deal with since Java classes always start with the magic sequence <code>0xCAFEBABE</code>.</p><p>Here&rsquo;s a Python implementation for the sending side. Note that it&rsquo;s necessary to make sure that the data is interpreted as a signed integer, because <code>java.math.BigInteger#toByteArray</code> will <a href=https://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html#toByteArray()>return the sign-extended 2&rsquo;s complement representation</a>.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># From https://stackoverflow.com/a/1181922</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>b36encode</span><span class=p>(</span><span class=n>number</span><span class=p>,</span> <span class=n>alphabet</span><span class=o>=</span><span class=s1>&#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Converts an integer to a base36 string.&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=ow>not</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>number</span><span class=p>,</span> <span class=nb>int</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=s1>&#39;number must be an integer&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>base36</span> <span class=o>=</span> <span class=s1>&#39;&#39;</span>
+</span></span><span class=line><span class=cl>    <span class=n>sign</span> <span class=o>=</span> <span class=s1>&#39;&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>number</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>sign</span> <span class=o>=</span> <span class=s1>&#39;-&#39;</span>
+</span></span><span class=line><span class=cl>        <span class=n>number</span> <span class=o>=</span> <span class=o>-</span><span class=n>number</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=mi>0</span> <span class=o>&lt;=</span> <span class=n>number</span> <span class=o>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=n>alphabet</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>sign</span> <span class=o>+</span> <span class=n>alphabet</span><span class=p>[</span><span class=n>number</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=n>number</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>number</span><span class=p>,</span> <span class=n>i</span> <span class=o>=</span> <span class=nb>divmod</span><span class=p>(</span><span class=n>number</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=n>alphabet</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=n>base36</span> <span class=o>=</span> <span class=n>alphabet</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>+</span> <span class=n>base36</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>sign</span> <span class=o>+</span> <span class=n>base36</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>encode</span><span class=p>(</span><span class=n>data</span><span class=p>:</span> <span class=nb>bytes</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>datalong</span> <span class=o>=</span> <span class=nb>int</span><span class=o>.</span><span class=n>from_bytes</span><span class=p>(</span><span class=n>data</span><span class=p>,</span> <span class=n>byteorder</span><span class=o>=</span><span class=s1>&#39;big&#39;</span><span class=p>,</span> <span class=n>signed</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>b36encode</span><span class=p>(</span><span class=n>datalong</span><span class=p>)</span><span class=o>.</span><span class=n>lower</span><span class=p>()</span>
+</span></span></code></pre></div><p>Here are a couple of examples, first we encode some data:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>encode</span><span class=p>([</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=s1>&#39;a2f44&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>encode</span><span class=p>([</span><span class=mi>240</span><span class=p>,</span> <span class=mi>253</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>16</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=s1>&#39;-45y3n4&#39;</span>
+</span></span></code></pre></div><p>And we decode them by using the appropriate constructor, then invoking <code>java.math.BigInteger#toByteArray</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>IOException</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>((</span><span class=n>Arrays</span><span class=o>.</span><span class=na>toString</span><span class=o>(</span><span class=k>new</span> <span class=n>BigInteger</span><span class=o>(</span><span class=s>&#34;a2f44&#34;</span><span class=o>,</span> <span class=n>36</span><span class=o>).</span><span class=na>toByteArray</span><span class=o>())));</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// [1, 2, 3, 4]
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>((</span><span class=n>Arrays</span><span class=o>.</span><span class=na>toString</span><span class=o>(</span><span class=k>new</span> <span class=n>BigInteger</span><span class=o>(</span><span class=s>&#34;-45y3n4&#34;</span><span class=o>,</span> <span class=n>36</span><span class=o>).</span><span class=na>toByteArray</span><span class=o>())));</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// [-16, -3, 4, 16]
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>}</span>
+</span></span></code></pre></div></article></main></div><footer>
 <section class=req-js>
 <button class=outline-dashed title="Change to light/dark mode."><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use xlink:href="#adjust"/></svg></button><input class=outline-dashed type=color list=presets value=#f27466 title="Change accent color." aria-label="Change accent color."><datalist id=presets><option value=#225670><option value=#f27466><option value=#1f676b><option value=#f3a530><option value=#902b37><option value=#1dbc91><option value=#754e85><option value=#7fc121><option value=#a8314a><option value=#ff7433><option value=#3e6728><option value=#c063bd></datalist>
-</section>
-<p>Rendered by <a href=https://gohugo.io>Hugo</a><br>Theme is <a href=https://gitlab.com/rmaguiar/hugo-theme-color-your-world>Color Your World</a> by <a href=https://gitlab.com/rmaguiar>Raphael Aguiar<a></p>
-</footer><svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true"><symbol viewBox="0 0 512 512" id="adjust"><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705.0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></symbol><symbol viewBox="0 0 448 512" id="hashtag"><path d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 00-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 00-11.813 9.891L132.528 128H53.432a12 12 0 00-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 00-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0011.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0011.813-9.891L315.472 384h79.096a12 12 0 0011.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0011.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"/></symbol><symbol viewBox="0 0 320 512" id="caret-down"><path d="M31.3 192h257.3c17.8.0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3.0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"/></symbol></svg>
-<script>'use strict';const PALETTE=document.querySelector('footer input');PALETTE.onchange=function(){const a=PALETTE.value;SHEET.setProperty('--accent',a),ROOT.dataset.mode==='light'?localStorage.setItem('lightAccent',a):localStorage.setItem('darkAccent',a),updateAccent()}</script>
-</body>
-</html>
+</section><p>Rendered by <a href=https://gohugo.io>Hugo</a><br>Theme is <a href=https://gitlab.com/rmaguiar/hugo-theme-color-your-world>Color Your World</a> by <a href=https://gitlab.com/rmaguiar>Raphael Aguiar<a></p></footer><svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true"><symbol viewBox="0 0 512 512" id="adjust"><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705.0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></symbol><symbol viewBox="0 0 448 512" id="hashtag"><path d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 00-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 00-11.813 9.891L132.528 128H53.432a12 12 0 00-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 00-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0011.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0011.813-9.891L315.472 384h79.096a12 12 0 0011.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0011.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"/></symbol><symbol viewBox="0 0 320 512" id="caret-down"><path d="M31.3 192h257.3c17.8.0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3.0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"/></symbol></svg><script>'use strict';const PALETTE=document.querySelector("footer input");PALETTE.onchange=function(){const e=PALETTE.value;SHEET.setProperty("--accent",e),ROOT.dataset.mode==="light"?localStorage.setItem("lightAccent",e):localStorage.setItem("darkAccent",e),updateAccent()}</script>
+</body></html>
