@@ -141,7 +141,7 @@ It's not that the systems are similar enough for the [same persistence method](h
 I needed to take a look at the configuration files, and it makes sense: they may contain a few configuration options that are used within shell command invocations without sanitization on startup. After all, it should be already sanitized by whatever system was used to change them, right?
 
 ![assets/Pasted image 20210312063835.png](/assets/blog/img/1c9dc4de9a9a523491790bef07773c1ac6ad9b911e19d6f762bff2eacfc2a8e5.png)
-_Turns out that threat models matter a bit more in this context. Source: [xkcd](https://xkcd.com/327/)._
+<span style="text-align: center;">_Turns out that threat models matter a bit more in this context. Source: [xkcd](https://xkcd.com/327/)._</span>
 
 So how do we do so? The files are in some binary format, but the [Archer C2300 hacking wiki](https://github.com/acc-/tplink-archer-c2300) has some tools for converting the backup .bin files to XML and back. Awesome!
 
