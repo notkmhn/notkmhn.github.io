@@ -1,8 +1,7 @@
-# Hugo default output directory
+# Hugo stuff
 /public
-
-# Hugo resources dir
 /resources
+.hugo_build.lock
 
 ## OS Files
 # Windows
