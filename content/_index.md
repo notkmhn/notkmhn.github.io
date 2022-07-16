@@ -4,7 +4,7 @@ disableTitleSeparator = true
 +++
 
 # Hi, I'm Khaled
-Online, I go by some variation of my initials and/or name: [**kmhn**](https://keybase.io/kmhn) and [**notkmhn**](https://twitter.com/notkmhn) (due to being too late to claim a short handle).
+Online, I go by some variation of my initials: [**notkmhn**](https://twitter.com/notkmhn) and [**kmhn**](https://keybase.io/kmhn) whenever I can claim a short handle.
 
 I have a background in computer science and cybersecurity with a wide interest in a number of their subfields. Usually, I'm up to discuss programming, software architecture, embedded systems, cryptography and everything else in between!
 
