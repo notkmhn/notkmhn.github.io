@@ -156,8 +156,8 @@ paginate = 5
     
   [params.social.centralized]
     keybase       = [ "kmhn" ]
-    twitter       = [ "kmhnassar" ]
-    github        = [ "khalednassar" ]
+    twitter       = [ "notkmhn" ]
+    github        = [ "notkmhn" ]
     #entry         = [ "username", "label (optional)" ]
     
     # The "entry" here IS important. It's used to load the data.
